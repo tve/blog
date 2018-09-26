@@ -1,4 +1,4 @@
-baseURL = "http://blog.voneicken.com/"
+baseURL = "https://blog.voneicken.com/"
 languageCode = "en-us"
 title = "TvE's Blog"
 theme = "story"
