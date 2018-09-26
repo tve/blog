@@ -1,0 +1,29 @@
+baseURL = "http://blog.voneicken.com/"
+languageCode = "en-us"
+title = "TvE's Blog"
+theme = "story"
+enableRobotsTXT = true
+paginate = 10
+summaryLength = 40
+
+[params]
+  classes = ["feature-depth", "feature-figcaption", "feature-hrdinkus"]
+  author = "Thorsten von Eicken"
+  twitter = "tvoneicken"
+
+[[menu.social]]
+  name = "GitHub"
+  title = "fab fa-github-square"
+  url = "https://github.com/tve"
+
+[[menu.main]]
+  name = "Projects"
+  title = "Projects"
+  url = "/projects/"
+
+[outputs]
+  home = ["HTML", "JSON", "RSS"]
+  page = ["HTML"]
+  section = ["HTML", "RSS"]
+  taxonomy = ["HTML", "RSS"]
+  taxonomyTerm = ["HTML", "RSS"]
