@@ -8,7 +8,7 @@ categories:
 ---
 I spent some time this week troubleshooting the LoRa communication
 problems I encountered when testing long range links from the ocean
-sports tracker. It lead me to the SPI bus...
+sports tracker. It led me to the SPI bus...
 <!--more-->
 
 ![Tracker with dipole comparison](/img/sports-tracker/20180924_145431.jpg# fr w-40pct ml-3)
@@ -21,7 +21,7 @@ sides use the same TX power but I see 9-10dB less SNR at the node end. I
 thought it had something to do with the GW being a small linux SBC and
 having more noise or something, so I put together a simple STM32-based
 node to respond with ACKs like the GW does. I also displayed more info:
-SNR, RSSI, and noise measurements I took while there was no packet in
+SNR, RSSI, and noise measurements taken there was no packet in
 the air. It was all rather confusing, in part because the SNR on the
 sx1276 LoRa chips doesn't report above about 8dB and at close range
 while testing it's difficult to actually go that low.
@@ -65,7 +65,7 @@ from the STM32 chip. Testing at medium range seems to indicate a 2dB
 loss in sensitivity, which is not great but a start. I yet have to do
 a long range test.
 
-On the current `stm32l082` chip package I'm out of pins, so I can't separate
+On the current STM32L082 chip package I'm out of pins, so I can't separate
 the radio's SPI bus from the display's. I will probably have to live with
 the 2dB sensitivity loss for my prototype, if that's what it comes out to
 be at long distance. I'm pondering what to do for the "real" version. One
