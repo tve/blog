@@ -14,7 +14,7 @@ Light barrier using pulsed IR. The transmitter is based on NE555 timers and the 
 on a special-purpose IR receiver, an stm32 for control, and an rfm69 radio to transmit
 interruptions.<!--more-->
 
-See [driveway entrance chime powered by solar light barrier](http://localhost:1313/projects/driveway-chime)
+See [driveway entrance chime powered by solar light barrier](/projects/driveway-chime)
 for the project intro.
 
 ### IR receiver
