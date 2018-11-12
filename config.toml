@@ -7,7 +7,7 @@ paginate = 10
 summaryLength = 40
 
 [params]
-  classes = ["feature-depth", "feature-figcaption", "feature-hrdinkus"]
+  classes = ["feature-depth", "feature-figcaption", "feature-hrdinkus", "feature-hr3-cb"]
   author = "Thorsten von Eicken"
   twitter = "tvoneicken"
 
