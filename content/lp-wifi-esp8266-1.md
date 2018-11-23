@@ -76,7 +76,8 @@ As I dove in I found a number of issues with my set-up, some of which I want to 
 
 ### First measurements
 
-The esp8266 runs a simple sketch in the Arduino framework. The sketch 
+The esp8266 runs a simple sketch (available at https://github.com/tve/low-power-wifi)
+in the Arduino framework. The sketch 
 starts by loading data from the real-time clock memory, which doesn't get lost during deep-sleep.
 The it initializes the Wifi in one of 4 modes based on the config data,
 connects to a TCP server on the network using the server's IP address (no DNS lookup). and
