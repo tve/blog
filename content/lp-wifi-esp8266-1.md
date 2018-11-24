@@ -263,7 +263,6 @@ The DHCP and ARP phases also take up quite some time of the activity period. We 
 eliminate the DHCP phase by using a static IP or remembering the dynamic one but the ARP phase is
 likely to stay.
 
-More about these optimizations in the next post (coming soon). <!--[next
-post](/lp-wifi-esp8266-2)!-->
+More about these optimizations in the [next post](/lp-wifi-esp8266-2)
 
 [Low-power Wifi series index](/categories/low-power-wifi)
