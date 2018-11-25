@@ -40,11 +40,17 @@ reception of the beacon given clock rate uncertainty.
 There are additional modes, such as scheduled WMM Power Save and Power Save Multi-poll but they get
 more complicated and I haven't seen small devices using them.
 
-How well power save mode works can unfortunately only be answered by experimentation.
-Worse, a fundamental problem here is that the device
-is not really in control of its own power consumption,
-it really depends more on what is happening on the network than on the device itself.
-This means that on the test bench when using an isolated test-Wifi network everything may look
+A fundamental problem with Power Save Mode is that unrelated activity on the network can cause
+packets to be queued for delivery to the sleeping device, causing a wake-up.
+This means that the device is not really in control of its own power consumption.
+A simple example of such activity are the ARP requests seen in
+the deep-sleep mode: suppose there are 20 esp8266's on the network, each of which wakes up every 20
+seconds. That would result in an ARP packet being broadcast every second on average as some esp8266
+wakes up and tries to find it server and as a result an unrelated esp8266 is Power Save Mode would
+get woken up once per second!
+
+As a result, how well power save mode works can only be answered by experimentation.
+On the test bench, when using an isolated test-Wifi network, everything may look
 perfect, but then in a real-world deployment the activity on the network can raise the power
 consumption by orders of magnitude.
 
