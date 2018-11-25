@@ -2,7 +2,7 @@
 name: lp-wifi-association
 title: Low-Power Wifi using Power Save Mode
 date: 2018-11-24
-thumbnail: "/img/low-power-wifi/esp8266-light-sleep-open-sq.png"
+thumbnail: "/img/low-power-wifi/legacy_power.JPG"
 categories:
 - low-power-wifi
 - low-power

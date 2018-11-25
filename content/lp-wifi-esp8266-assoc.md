@@ -13,6 +13,7 @@ categories:
 In automatic light-sleep mode the esp8266 goes to sleep when there is no activity. From there it can
 wake-up due to a timer or due to Wifi activity.
 <!--more-->
+
 Used on its own, light-sleep mode wakes up according to the access point's DTIM setting, i.e., the
 period at which beacons contain a map of pending packets. In a recent SDK Espressif added a
 twist on this, which enables the application to specify the period explicitly, in which case the access
