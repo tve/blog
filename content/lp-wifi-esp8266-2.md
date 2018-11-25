@@ -248,7 +248,8 @@ Notes:
 The conclusion one can draw here is that it is should certainly be possible to run an esp8266 in
 this periodic wake-mode for a week to over a year on a single 1000mAh LiPo battery!
 
-The next post (yet to be written) goes a step further and explores running an esp8266 continuously
-in light-sleep mode where it uses the Wifi power saving modes to reduce power consumption.
+The [next post](/lp-wifi-association) takes a brief look at an alternative, which is to
+maintain an association with the access point and leverage power save mode to reduce
+power consumption.
 
 [Low-power Wifi series index](/categories/low-power-wifi)
