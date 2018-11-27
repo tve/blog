@@ -15,7 +15,7 @@ in less time thanks to its faster dual cores. Is that really the case or will it
 power as it waits for Wifi responses?<!--more-->
 
 Again, only experimentation will provide an answer. The [test
-sketch](https://github.com/tve/low-power/wifi/esp32-deep-sleep) uses the Arduino framework and a
+sketch](https://github.com/tve/low-power-wifi/tree/master/esp32-deep-sleep) uses the Arduino framework and a
 pre-release version of ESP-IDF v3.2 underneath. The code is adapted from the esp8266 version,
 changing a few portions that were esp8266 specific. One notable difference is that the local port
 number gets selected randomly automatically, so that's one less work-around in the app code.
