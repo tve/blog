@@ -56,7 +56,8 @@ platformio's "staging" version of the framework).
 
 ### Test application
 
-As a test I use a simple app that connects to Wifi, connects to the mqtt server, subscribes to a
+As a test I use a [simple app](https://github.com/tve/low-power-wifi/tree/master/esp32-deep-sleep-mqtts)
+that connects to Wifi, connects to the mqtt server, subscribes to a
 topic, then publishes a short message to that topic and finally waits for the message to come back
 on the subscription.
 This simulates a use-case where the esp32 periodically wakes up, takes a measurement and sends it to
