@@ -23,7 +23,9 @@ not somewhere across the internet. The latter case obviously adds latency and th
 esp32 awake longer. How much longer depends on the local internet connection, the
 distance to the server, and the server load.
 
-I had not set-up TSL for my local MQTT server, which runs mosquitto, so I took advantage of that
+![TLS PSK](/img/low-power-wifi/mqtt-psk.png# fr w-30pct)
+_Openssl output for TLS PSK connection from esp32_
+I had not set-up TLS for my local MQTT server, which runs mosquitto, so I took advantage of that
 to skip public key crypto and go straight to the PSK key cipher suites, which are new to me.
 
 The more traditional path using public key crypto is to generate a root certifacte
