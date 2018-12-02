@@ -251,6 +251,7 @@ the esp32 provides a number of options when using the deep-sleep mode. Specifica
 every 20 seconds when using an open access point (not really recommended!) and every minute when
 using a secure access point.
 
-Stay tuned for more posts about the Esp32's Wifi power consumption...
+The [next post](/lp-wifi-esp32-mqtt) goes a step further and explores what happens if the esp32
+makes a TLS connection to an MQTT server and sends & receives some messages.
 
 [Low-power Wifi series index](/categories/low-power-wifi)
