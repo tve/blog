@@ -207,6 +207,7 @@ varies dramatically between open Wifi networks and secure networks.
 Specifically, the penalty for security can be a factor of 10x!
 In contrast, the light-sleep mode shows little difference between open and secure networks.
 
-The next set of posts will present a similar analysis for the esp32, stay tuned...
+The [next post](/lp-wifi-esp32-1) examines whether the Espressif Esp32 is a better choice for
+low-power wifi operation.
 
 [Low-power Wifi series index](/categories/low-power-wifi)

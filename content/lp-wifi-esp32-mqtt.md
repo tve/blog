@@ -84,6 +84,6 @@ at most 100ms, i.e. less than 10% of the total. So as long as the server is fast
 doesn't really matter what the esp32 does once it has gone through all the trouble of associating
 with the access point. (I should caution that using public key crypto may take longer, I didn't try.)
 
-Stay tuned for more posts about the Esp32's Wifi power consumption...
+The [next post](/lp-wifi-esp32-boards) takes a look at my quest for a low-power esp32 board.
 
 [Low-power Wifi series index](/categories/low-power-wifi)
