@@ -1,7 +1,7 @@
 ---
 name: lp-wifi-esp32-2
 title: ESP32 Deep-Sleep with Periodic Wake-up
-date: 2018-11-26
+date: 2018-11-27
 thumbnail: "/img/low-power-wifi/esp32-deep-sleep-secure-mode-3-all-sq.png"
 categories:
 - low-power-wifi
