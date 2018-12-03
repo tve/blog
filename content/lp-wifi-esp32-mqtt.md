@@ -11,8 +11,8 @@ categories:
 - mqtt
 ---
 
-Periodically waking up from deep sleep and sending a short TCP message is interesting, but how does
-a real scenario involving sending to and receving from an MQTT server look like?
+Periodically waking up from deep sleep and sending a short TCP message is interesting, but
+how does the esp32 perform in a real scenario where it communicates with an MQTT server?
 <!--more-->
 
 The previous posts cover the startup-time to connect to Wifi so this is really an extension of those

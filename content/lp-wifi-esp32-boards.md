@@ -34,7 +34,7 @@ scratching I had the brilliant idea to measure the 3.3V rail. It showed only 2.3
 (My LiPo was only ~30% full.) Ouch, that's a no-go. How can that be?
 
 The answer is that there are LDOs and and LDOs...
-The board uses an AMS1117 and it's drop-out voltage, i.e., minimal input-to-output voltage drop is over
+The board uses an AMS1117 and its drop-out voltage, i.e., minimal input-to-output voltage drop is over
 1V.
 Calling this an LDO seems like a marketing stunt to me...
 Anyway, probably a great board, but totally unsuitable for battery operation.
