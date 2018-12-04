@@ -1,8 +1,8 @@
 ---
 name: lp-wifi-esp32-light
 title: ESP32 Maintaining an Association
-date: 2018-12-02
-thumbnail: "/img/low-power-wifi/esp32-deep-sleep-secure-mode-3-all-sq.png"
+date: 2018-12-03
+thumbnail: "/img/low-power-wifi/esp32-light-sleep-sq.png"
 categories:
 - low-power-wifi
 - low-power
