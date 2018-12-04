@@ -19,10 +19,10 @@ reduce power when it is not active. The modes are described in
 and they all take advantage of the Wifi power save mode and DTIM
 interval (see my [earlier post](/lp-wifi-association) on the topic).
 To save power, the device tells the access point (AP) that it's turning its radio off
-and the AP holds packets destined to the device until the device wakes-up again.
+and the AP holds packets destined for the device until it wakes-up again.
 In addition, the AP includes a flag in its
 beacons to tell the device whether it has packets pending so the device only neeeds to turn RX on
-periodically and check tothe beacon.
+periodically and check the beacon.
 
 ### Modem sleep
 
@@ -78,7 +78,7 @@ The odd feature of this scope capture is the fact that there are two wake-up per
 spaced only 150ms apart when the `loop` function iterations are several seconds apart. Given that
 neither of the two wake-up periods start at a beacon interval the reason must be other than the
 AP having some packet pending.
-The answer about what is happening comes from the tcpdump above: the TCP stack on
+The answer is seen in the tcpdump above: the TCP stack on
 the esp32 delays the final ACK by about 100ms, i.e., longer than the lingering time. Delaying ACKs
 is a common TCP optimization that reduces the number of packets transmitted. It works well on the
 server end where delaying the ACK allowed it to be piggy-backed on the response data packet but it
@@ -99,8 +99,8 @@ point of view the minimum consumption of 40mA is not what I'm looking for.
 
 In order to reduce the power consumption further the esp32 needs to go into light sleep mode when it
 is idle. In the ESP IDF framework this is done by enabling power management (a compile-time option)
-and then calling a few functions as described in
-[the documentation](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/power_management.html).
+and then calling a few functions as described in this
+[documentation](https://docs.espressif.com/projects/esp-idf/en/latest/api-reference/system/power_management.html).
 Unfortunately the arduino framework does not currently support enabling the power management because
 its interaction with peripheral clocks is non-trivial.
 
