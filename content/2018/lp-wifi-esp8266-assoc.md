@@ -3,8 +3,8 @@ name: lp-wifi-esp8266-assoc
 title: ESP8266 Maintaining an Association
 date: 2018-11-25
 thumbnail: "/img/low-power-wifi/esp8266-light-sleep-open-sq.png"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp8266
@@ -16,7 +16,7 @@ wake-up due to a timer or due to Wifi activity.
 
 Used on its own, light-sleep mode wakes up according to the access point's DTIM setting, i.e., the
 period at which beacons contain a map of pending packets. In a recent SDK Espressif added a
-twist on this, which enables the application to specify the period explicitly, in which case the access
+twist on this that enables the application to specify the period explicitly, in which case the access
 point's setting is ignored. This allows the esp8266 to control its wake-up interval instead of being
 at the mercy of the settings in the access point.
 
@@ -29,7 +29,7 @@ starts by connecting to the access point and putting the esp8266 into light-slee
 interval of 5 beacons, i.e., 500ms. The `loop()` then consists of setting a gpio pin to high to
 trigger the scope, opening a TCP connection to a test server, sending some data, and closing the
 connection. It then sets the gpio pin to low and calls `delay(2000)`. At that point there's nothing
-more for the esp8266 to do, so we expect it to go into light sleep mode for 2 seconds, interrupted
+more for the esp8266 to do so we expect it to go into light sleep mode for 2 seconds, interrupted
 only by the periodic wake-up every 500ms to catch a beacon.
 
 So long for the theory, the following screen capture shows what happens in practice. This is using
@@ -38,7 +38,7 @@ an open access point for starters.
 ![Light sleep](/img/low-power-wifi/esp8266-light-sleep-open-all.png)
 _Scope capture of 12 seconds in automatic light sleep mode with a `loop()` iteration in the middle._
 
-The yellow trace shows the gpio pin which briefly goes high in the center of the capture (not really
+The yellow trace shows the gpio pin which very briefly goes high in the center of the capture (not really
 visible). Each horizontal division corresponds to one second, the full capture lasts 12 seconds. The
 blue trace shows power consumption at 20mA per vertical division.
 
@@ -58,8 +58,10 @@ modem-sleep, which consumes about 16mA, ouch! Other captures show a different pa
 more than half the time is spent in modem-sleep.
 As we will see, this frequent operation at 16mA really eats into the run-time!
 
+### Wake-cycle activity
+
 The following screen capture zooms in on the activity in the middle of the previous capture where
-the `loop()` iteration and corresponding TCP connection occurs.
+the `loop()` iteration and corresponding TCP connection occur.
 
 ![Light sleep magnified](/img/low-power-wifi/esp8266-light-sleep-open-zoom.png)
 _Scope capture of a `loop()` iteration._
@@ -84,7 +86,7 @@ The best way to understand what is happening is to look at a packet capture:
   125   0.304s <- Beacon (test)
   126   0.307s -> Null data packet
   127   0.307s <- Acknowledgment
-               <- [Missing ICMP request packet]
+               <- [Missing ICMP echo request packet]
   128   0.314s -> Acknowledgment
   129   0.316s <- 192.168.0.106 > 192.168.0.2: ICMP echo reply
   130   0.316s -> Acknowledgment
@@ -113,8 +115,7 @@ scope capture above (the two don't show the exact same events).
 
 I also looked at the performance when using a secure access point and surprisingly there is no
 change in behavior to be seen. The TCP packet exchange may be happening a tad slower but when
-looking at two traces side-by-side it is impossible to determine which is from an open vs. secure
-access point.
+looking at two traces side-by-side it is impossible to distinguish the two.
 
 ### Putting it all together
 
@@ -139,11 +140,11 @@ talk to the esp8266 there is still a regular cadence of broadcast packets that c
 the esp8266 up.
 
 A perhaps extreme test is to ping the esp8266 every second. In that case it never goes to sleep at
-all, keeping the receiver going at 70mA full-time. What this highlights is that the esp8266 is
+all, keeping the receiver going at 70mA full-time! What this highlights is that the esp8266 is
 really at the mercy of the network environment and thus its battery run-time can be compromised by
 completely unrelated activity.
 
-The following table shows the average power consumption and run-time on a 1000mAh battery in a
+The following table and chart show the average power consumption and run-time on a 1000mAh battery in a
 variety of scenarios. The _iter period_ column specifies the rate at which `loop()` iterations run,
 the _pkts per second_ specifies the number of beacon-induced wake-up periods there are per second,
 the _ideal_ columns show the resulting average current and run-time if the esp8266 always properly
@@ -157,9 +158,9 @@ iter period [sec] | pkts per second | ideal [mA] | ideal [days] | actual [mA] | 
 1 | 1 | 17.6 | 2.4 | 24.9 | 1.7
 10 | 1 | 9.4 | 4.4 | 16.7 | 2.5
 
-The assumed durations and consumption levels are:
+![ESP8266 Light-Sleep Run-Time](/img/low-power-wifi/ESP8266 Light-Sleep Run-Time.png# nocaption)
 
-Light sleep modes | duration [ms] | current [mA]
+Operation | duration [ms] | current [mA]
 --- | ---:| ---:
 light-sleep | 500 | 1.5
 modem-sleep | 500 | 16
@@ -167,10 +168,15 @@ beacon check | 10 | 70
 lingering | 80 | 70
 loop iteration | 50 | 70
 
-It is quite clear from the table that the light-sleep mode is significantly more power-hungry than
+<floatpara></floatpara>
+
+The assumed durations and consumption levels are shown in the table on the right.
+
+It is quite clear from the chart above that the light-sleep mode is significantly more power-hungry than
 the deep-sleep modes explored in a previous blog post.
 In order to get a run-time of more than a couple of days one has to somehow ensure that there are
-only very few broadcast packets on the network.
+only very few broadcast packets on the network and
+achieving run-times longer than a week assume that Espressif will someday fix the light-sleep bugs.
 
 To get a better sense of where the power is going
 the following table breaks down the % of power consumed in each mode for two of the rows above:
@@ -207,7 +213,11 @@ varies dramatically between open Wifi networks and secure networks.
 Specifically, the penalty for security can be a factor of 10x!
 In contrast, the light-sleep mode shows little difference between open and secure networks.
 
-The [next post](/lp-wifi-esp32-1) examines whether the Espressif Esp32 is a better choice for
-low-power wifi operation.
+My personal conclusion is that trying to use the esp8266 for long-term battery operation is a
+recipe for headaches, except in very narrow use-cases.
+The reason is a combination of the fact that it requires the use of
+deep-sleep, which is painful for anything but trivial applications, and
+that security requires rather long sleep intervals (not to mention its high memory requirements).
 
-[Low-power Wifi series index](/categories/low-power-wifi)
+The [next post](/2018/lp-wifi-esp32-1) examines whether the Espressif Esp32 is a better choice for
+low-power wifi operation.

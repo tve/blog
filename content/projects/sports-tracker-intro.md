@@ -1,10 +1,10 @@
 ---
 name: sports-tracker
-title: The Ocean Sports Fitness Tracker Project
+title: Ocean Sports Fitness Tracker
 date: 2018-07-14
 thumbnail: "/img/sports-tracker/20180717_175701_crop.jpg"
+project: sports-tracker
 categories:
-- Sports tracker
 - stm32
 - gps
 - lora
@@ -13,15 +13,15 @@ Real-time GPS tracker for surfskiing (or kayaking, paddling, rowing)
 with real-time display as well as LoRa and LTE radios for safety.
 <!--more-->
 
-![Tracker on surfski on the ocean in Santa Barbara](/img/sports-tracker/20180717_175701_sml.jpg# fr w-40pct ml-3)
-_Taking the tracker on a test spin out on the ocean off Santa Barbara._
-
 The ocean sports fitness tracker's purpose is to track a paddler in the
 ocean, provide real-time performance feedback to the paddler on a screen,
 and to also provide real-time tracking to on-shore family or buddies for
 safety purposes. After the outing the track is saved for performance
 analysis and long term monitoring of progress, possibly using one of
 the popular sports fitness tracking sites.
+
+![Tracker on surfski on the ocean in Santa Barbara](/img/sports-tracker/20180717_175701_sml.jpg# fr w-40pct ml-3)
+_Taking the tracker on a test spin out on the ocean off Santa Barbara._
 
 ### Background
 
@@ -122,3 +122,5 @@ look like?
 - Can I process the data using Node-Red and perhaps produce a decent UI in node-red.
 
 - Can I make any productive use of the BNO055 or is that just an infinite rabbit hole?
+
+The [next post](/2018/sports-tracker-initial) describes the initial build.

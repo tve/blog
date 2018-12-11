@@ -3,8 +3,8 @@ name: lp-wifi-esp8266-1
 title: ESP8266 Deep-Sleep with Periodic Wakeup
 date: 2018-11-22
 thumbnail: "/img/low-power-wifi/esp8266-set-up_sq.jpg"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp8266
@@ -59,32 +59,31 @@ In addition, I set-up a controlled Wifi environment:
 - a simple TCP service cobbled together using netcat running on my desktop to accept the esp8266's
   TCP connections a log the data sent into a file
 
-And for comparison purposes I also used:
+And for comparison purposes I also used a secured/encrypted home Wifi network with a Senao access
+point and an Android cell phone in hot-spot mode.
 
-- my secured/encrypted home Wifi network with a Senao access point
-- my Android cell phone in hot-spot mode
+As I dove in I found two issues with my set-up, which I want to mention up-front.
+The first is that the Wifi adapter in monitor mode misses some packets, specially some back-to-back packet
+combinations are systematically missed and I didn't find any tricks to fix that.
 
-As I dove in I found a number of issues with my set-up, some of which I want to mention up-front:
-
-- The Wifi adapter in monitor mode misses some packets, specially some back-to-back packet
-  combinations are systematically missed and I didn't find any tricks to fix that.
-- There seems to be a high packet loss between the esp8266 and the access point on the ODROID,
-  which I cannot explain. It happens whether the two systems are 1ft/30cm or 10ft/3m apart. I tried
-  changing preamble sizes, etc, to no avail.
-  I compared with using my home Wifi and realized it's not all that different plus, as we'll see,
-  the number of retransmissions don't actually affect the overall outcome.
+The second issue is that there seems to be a high packet loss between the esp8266 and the access
+point on the ODROID, which I cannot explain.
+It happens whether the two systems are 1ft/30cm or 10ft/3m apart.
+I tried changing preamble sizes, etc, to no avail.
+I compared with using my home Wifi and realized it's not all that different plus, as we'll see,
+the number of retransmissions don't actually affect the overall outcome.
 
 ### First measurements
 
-The esp8266 runs a simple sketch (available at https://github.com/tve/low-power-wifi)
+The esp8266 runs a [simple sketch](https://github.com/tve/low-power-wifi/tree/master/esp8266-deep-sleep)
 in the Arduino framework. The sketch 
 starts by loading data from the real-time clock memory, which doesn't get lost during deep-sleep.
-The it initializes the Wifi in one of 4 modes based on the config data,
-connects to a TCP server on the network using the server's IP address (no DNS lookup). and
-then sends a line of text with some timing info to the server.
+Then it initializes the Wifi in one of 4 modes based on the config data,
+connects to a TCP server on the network using the server's IP address (no DNS lookup), and
+sends a line of text with some timing info to the server.
 Finally it goes back to deep-sleep.
 
-The 4 modes differ in the amount of information passed into the Wifi initialization functions:
+The 4 modes differ in the amount of information passed into the Wifi initialization functions
 `WiFi.begin` and `WiFi.config`:
 
 mode | ssid, passwd | channel, bssid | ip, mask, gw, dns
@@ -94,7 +93,7 @@ mode | ssid, passwd | channel, bssid | ip, mask, gw, dns
 2 | ✔ |   | ✔
 3 | ✔ | ✔ | ✔
 
-A quick look at the messages sent to the server shows the following:
+A quick look at the information coming out of the sketch shows the following:
 ```
 Mode 0, Init 34 ms, Connect 2927 ms, Total 2961 ms, SSID test, SDK 3.0.0-dev(c0f7b44)
 Mode 1, Init 34 ms, Connect  177 ms, Total  211 ms, SSID test, SDK 3.0.0-dev(c0f7b44)
@@ -109,7 +108,7 @@ deep-sleep.
 
 It is immediately obvious that there is over an order of magnitude difference in those 4 modes, i.e.
 from about 140ms to connect to Wifi to almost 3 seconds! We could start hypothesizing based on the
-differences in the four modes, but it's far more interesting to start by focusing on mode 0 and
+differences in the four modes, but it's far more interesting to just focus on mode 0 and
 to see what all goes on.
 
 ### Mode 0: basic WiFi.begin()
@@ -122,19 +121,20 @@ point._
 
 The yellow trace is a gpio output that goes low at the start of the Arduino `setup()` function and
 rises again just before `loop()` completes and puts the microcontroller back into deep sleep.
-Each horizontal division corresponds to 500ms, thus the sketch runs for a tad under 3 seconds.
+Each horizontal division corresponds to 500ms, thus the sketch runs for a tad under 3 seconds,
+i.e. just about the time claimed by the sketch.
+
 The blue trace shows power consumption at the tune of 50mA per vertical division.
 It starts with a couple of stair steps as the uC initializes and mostly sits at about 140-150mA.
 The high peaks up to 350mA correspond to Wifi transmissions.
 
 In a first phase, shown as "Probes" in the scope capture,
-the esp8266 sends probe requests on all channels in order to locate the access point --
-only the channel of the access point is captured here.
+the esp8266 sends probe requests on all channels in order to locate the access point.
 These packets are shown in the packet dump below where packets sent by the esp8266 are marked with a `->`
 and packets sent by the AP with a `<-`.
 The first column is a packet counter (the skipped packets are beacons) and the second column
 shows the time elapsed with millisecond resolution since the start of the capture.
-Note that the ACK packets are Wifi-level acks of the probe responses and that due to the
+Note that the ACK packets are Wifi-level acks of the probe responses and due to the
 limitations mentioned earlier it is likely that additional ACKs were missed.
 ```
    51 66.208s -> Probe Request (test) [5.5* 11.0* 1.0* 2.0* 6.0 12.0 24.0 48.0 Mbit]
@@ -159,14 +159,16 @@ After the probes complete, there is a 1.5-2 second radio pause ("Idle" in the ca
 Presumably during this time the esp8266
 waits for other APs on other channels to potentially respond so it can pick the one with the best
 signal. In this case there is only one AP so it eventually proceeds on the channel being monitored.
-
 The rest of the activity ("Activity" in the capture) is concentrated in a rather short time
 period at the end of the whole cycle.
-To view it better here is a zoom-in of the same capture with a horizontal resolution of 20ms per
-division.
+
+### Mode 0 activity
+
+To view the activity at the end of the wake period here is a zoom-in of the same capture with a
+horizontal resolution of 20ms per division.
 
 ![Wake-up cycle zoomed](/img/low-power-wifi/ap-test-mode-0-end-annot.png)
-_Zooming into the activity period of the overall screen capture shows the phases described below._
+_Zooming into the activity period of the overall screen capture shows the individual phases._
 
 Let's go through all the phases marked-up in the scope capture using the packet captures to
 understand exactly what is happening.
@@ -188,7 +190,9 @@ that there is no old association state left in the AP:
   130 68.929s <- Assoc Response AID(1) :: Successful
   131 68.930s -> Acknowledgment RA:74:da:38:06:52:32
 ```
+
 Now that the esp8266 is associated it can ask for an IP address using DHCP:
+
 ```
   133 68.932s -> IP 0.0.0.0.68 > 255.255.255.255.67: BOOTP/DHCP, Request from 5c:cf:7f:05:c0:db, length 308
   134 68.936s <- Acknowledgment RA:5c:cf:7f:05:c0:db
@@ -201,10 +205,12 @@ Now that the esp8266 is associated it can ask for an IP address using DHCP:
   142 68.971s <- IP 192.168.0.1.67 > 192.168.0.106.68: BOOTP/DHCP, Reply, length 300
   143 68.974s -> Acknowledgment RA:74:da:38:06:52:32
 ```
+
 At this point the esp8266 has its IP address, it now sends gratuitous ARPs in order to ensure that
 no-one else is using the same IP address. Shortly thereafter it requests the MAC address of the
 server to which data is to be sent. This is repeated because for some reason the server didn't
 respond.
+
 ```
   144 68.975s -> ARP, Request who-has 192.168.0.106 tell 192.168.0.106, length 28
   145 68.976s <- Acknowledgment RA:5c:cf:7f:05:c0:db
@@ -215,7 +221,9 @@ respond.
   150 68.992s <- ARP, Reply 192.168.0.2 is-at b8:97:5a:90:54:5a, length 46
   151 68.993s -> Acknowledgment RA:74:da:38:06:52:32
 ```
+
 Finally everything is ready for some data! This is the TCP connection:
+
 ```
   152 68.994s -> IP 192.168.0.106.49669 > 192.168.0.2.12345: Flags [S], seq 6509, win 2144, options [mss 536,nop,nop,sackOK], length 0
   153 68.995s <- Acknowledgment RA:5c:cf:7f:05:c0:db
@@ -234,10 +242,13 @@ Finally everything is ready for some data! This is the TCP connection:
   163 69.011s -> IP 192.168.0.106.49669 > 192.168.0.2.12345: Flags [.], ack 2, win 2143, length 0
   164 69.012s <- Acknowledgment RA:5c:cf:7f:05:c0:db
 ```
-And we're done! The code has a sleep for 20ms that I forgot to remove before it puts the esp8266 to sleep.
-A few of these are used up by the shutting down of TCP and
+
+And it's done! The code has a `delay()` for 20ms that I forgot to remove before it puts the esp8266 to sleep.
+A few of these are overlapped by the shutting down of TCP and
 then the esp8266 disassociates from the AP. There are a total of 11 disassociation frames (not
 all are shown here):
+
+
 ```
   165 69.029s -> Disassociation: Disassociated because sending station is leaving (or has left) BSS
   166 69.029s <- Acknowledgment RA:5c:cf:7f:05:c0:db
@@ -248,21 +259,20 @@ all are shown here):
   171 69.030s -> Disassociation: Disassociated because sending station is leaving (or has left) BSS
   172 69.031s <- Acknowledgment RA:5c:cf:7f:05:c0:db
 ```
-After the last packet it takes another 90ms before the esp8266 actually powers down, why is not
-entirely clear.
+
+After the last packet it takes another 90ms before the esp8266 actually powers down, what it does
+during that period is not entirely clear.
 
 ### What have we learned?
 
-What have we learned from this trace? First of all the probing takes the bulk of the time! This
+The most obvious observation from this trace is that the probing takes the bulk of the time! This
 can be seen not only from the scope capture but also from the fact that the two modes that specify
 the channel and bssid (modes 1 and 3) are much faster in connecting than the other two.
 It's clearly worthwhile to eliminate the probing from the wake-up, which is done in the code by
-remembering the info in the RTC RAM.
+using the RTC RAM to remember the channel and bssid info from previous iterations.
 
 The DHCP and ARP phases also take up quite some time of the activity period. We should be able to
 eliminate the DHCP phase by using a static IP or remembering the dynamic one but the ARP phase is
 likely to stay.
 
-More about these optimizations in the [next post](/lp-wifi-esp8266-2)
-
-[Low-power Wifi series index](/categories/low-power-wifi)
+More about these optimizations in the [next post](/2018/lp-wifi-esp8266-2)

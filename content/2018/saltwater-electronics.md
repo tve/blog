@@ -2,8 +2,8 @@
 title: Do electronics like saltwater?
 date: 2018-07-26
 thumbnail: "/img/sports-tracker/20180807_205955_sml.jpg"
+project: sports-tracker
 categories:
-- Sports tracker
 ---
 Picture yourself swimming in the ocean and looking at your electronics
 bathing in the saltwater next to you...<!--more-->
@@ -39,3 +39,5 @@ Looks like I got really lucky that not more broke and that everything
 was held in place by the cables long enough for me to collect it before
 it would sink! For my next prototype I will make sure that the latch can't
 be accidentally opened with the toes!!!
+
+To be continued...

@@ -3,8 +3,8 @@ name: lp-wifi-esp32-2
 title: ESP32 Deep-Sleep Connecting to MQTT
 date: 2018-11-30
 thumbnail: "/img/low-power-wifi/mqtt-logo.png"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp32
@@ -16,15 +16,15 @@ how does the esp32 perform in a real scenario where it communicates with an MQTT
 <!--more-->
 
 The previous posts cover the startup-time to connect to Wifi so this is really an extension of those
-tests. To make it fully real, the connection to the MQTT server doesn't just use bare TCP connection 
-but additionally encrypts it using TLS. So this is a full-on real scenario. The only aspect that
+tests. To make it fully real, the connection to the MQTT server doesn't just use a bare TCP connection 
+but additionally encrypts it using TLS. So this is a full-on real scenario!
+
+The only aspect that
 may not be accurate in some use-cases is that the MQTT server is located on the local network and
 not somewhere across the internet. The latter case obviously adds latency and thus will keep the
 esp32 awake longer. How much longer depends on the local internet connection, the
 distance to the server, and the server load.
 
-![TLS PSK](/img/low-power-wifi/mqtt-psk.png# fr w-30pct)
-_Openssl output for TLS PSK connection from esp32_
 I had not set-up TLS for my local MQTT server, which runs mosquitto, so I took advantage of that
 to skip public key crypto and go straight to the PSK key cipher suites, which are new to me.
 
@@ -36,6 +36,8 @@ crypto involved is quite heavy, i.e. slow.
 
 ### TLS using pre-shared key cipher suites
 
+![TLS PSK](/img/low-power-wifi/mqtt-psk.png# fr w-40pct ml3)
+_Openssl output for TLS PSK connection from esp32_
 PSK stands for pre-shared key and means that the client and server share a key. This replaces all
 the certs and private keys. 
 In addition to the PSK, the client also has a string ID,
@@ -62,7 +64,7 @@ topic, then publishes a short message to that topic and finally waits for the me
 on the subscription.
 This simulates a use-case where the esp32 periodically wakes up, takes a measurement and sends it to
 the MQTT server, but also subscribes to a topic so it can be sent commands to make changes or
-perhaps to stay awake and accept interactive commands for a period if time.
+perhaps to stay awake and accept interactive commands for a period of time.
 
 The first text output of the app is shown below. The duration labeled "Mqtt" is from start-up to
 connecting to the MQTT server, including crypto. The duration labeled "Sleep" then further includes
@@ -85,6 +87,4 @@ at most 100ms, i.e. less than 10% of the total. So as long as the server is fast
 doesn't really matter what the esp32 does once it has gone through all the trouble of associating
 with the access point. (I should caution that using public key crypto may take longer, I didn't try.)
 
-The [next post](/lp-wifi-esp32-boards) takes a look at my quest for a low-power esp32 board.
-
-[Low-power Wifi series index](/categories/low-power-wifi)
+The [next post](/2018/lp-wifi-esp32-boards) takes a look at my quest for a low-power esp32 board.

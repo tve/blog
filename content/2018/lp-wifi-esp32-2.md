@@ -3,109 +3,30 @@ name: lp-wifi-esp32-2
 title: ESP32 Deep-Sleep with Periodic Wake-up
 date: 2018-11-27
 thumbnail: "/img/low-power-wifi/esp32-deep-sleep-secure-mode-3-all-sq.png"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp32
 ---
 
-Deep-sleep with the esp32 is very similar to the esp8266 but it promises to complete each wake-cycle
-in less time thanks to its faster dual cores. Is that really the case or will it simply consume more
-power as it waits for Wifi responses?<!--more-->
-
-Again, only experimentation will provide an answer. The [test
-sketch](https://github.com/tve/low-power-wifi/tree/master/esp32-deep-sleep) uses the Arduino framework and a
-pre-release version of ESP-IDF v3.2 underneath. The code is adapted from the esp8266 version,
-changing a few portions that were esp8266 specific. One notable difference is that the local port
-number gets selected randomly automatically, so that's one less work-around in the app code.
-
-The code has the same 4 modes as the esp8266 version.
-They differ in the amount of information passed into the Wifi initialization functions:
-`WiFi.begin` and `WiFi.config`:
-
-mode | ssid, passwd | channel, bssid | ip, mask, gw, dns
-:---:|:---:|:---:|:---:
-0 | ✔ |   |  
-1 | ✔ | ✔ |  
-2 | ✔ |   | ✔
-3 | ✔ | ✔ | ✔
-
-A quick look at the messages sent to the server shows the following:
-
-```
-Mode 0, Init 17 ms, Connect 798 ms, Total 815 ms, SSID test, IDF v3.2-dev-39-gaaf12390
-Mode 1, Init 17 ms, Connect 205 ms, Total 222 ms, SSID test, IDF v3.2-dev-39-gaaf12390
-Mode 2, Init 17 ms, Connect 766 ms, Total 783 ms, SSID test, IDF v3.2-dev-39-gaaf12390
-Mode 3, Init 17 ms, Connect 163 ms, Total 180 ms, SSID test, IDF v3.2-dev-39-gaaf12390
-```
-
-We see the same behavior as with the esp8266 where modes that don't specify the channel/BSSID (0 & 2) take
-significantly longer than modes that do (1 & 3).
-
-### Open access point
-
-Diving past the numbers in the table above, here is a scope capture of what mode 0 (specify only
-SSID in `Wifi.begin()`) on an open access point looks like:
-
-![ESP32 deep sleep scope capture](/img/low-power-wifi/esp32-deep-sleep-open-mode-0-all-annot.png)
-_Scope capture of the esp32 waking from deep sleep and making a TCP connection to a server._
-
-Given what we know from the esp8266 we can immediately assume that the long section (marked "probes")
-corresponds to the esp32 probing all the channels. A packet dump confirms this assumption
-and overall looks as one might expect, so I won't reproduce it here in its entirety.
-
-Looking at packet dumps I kept stumbling over oddities during probing. One of them is that the esp32
-does not reliably ACK probe responses from the AP even though all other packets I see are ACKed
-reliably.
-Here is a snippet that shows it ("->" refers to TX and "<-" to RX from the esp32 perspective):
-
-```
-              -> [Missed initial probe request]
-  107 56.431s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  108 56.432s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  109 56.434s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  110 56.435s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  111 56.437s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  112 56.438s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  113 56.440s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  116 56.546s -> Probe Request (test) [5.5* 11.0* 1.0* 2.0* 6.0 12.0 2 4.0 48.0 Mbit]
-  117 56.551s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  118 56.553s -> Acknowledgment
-  119 56.556s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  120 56.558s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  121 56.559s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  122 56.561s -> Acknowledgment
-  125 56.667s -> Probe Request (test) [5.5* 11.0* 1.0* 2.0* 6.0 12.0 2 4.0 48.0 Mbit]
-  126 56.672s <- Probe Response (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 1 2.0 18.0 Mbit] CH: 6
-  127 56.674s -> Acknowledgment
-```
-
-Specifically, packets 108 through 113 are retransmissions from the AP because the esp32 doesn't
-respond with a Wifi ACK. Another oddity is that even after the esp32 ACKs a response (packets
-117-118) it sends a fresh probe request later on (packet 125).
-
-I puzzled over this for a long time and eventually reached the following hypothesis:
-
-1. When the esp32 has to probe multiple channels it can only do so on one channel at a time, so it
-   may miss whole sets of responses due to switching away to the next channel.
-2. The probing tries to discover _all_ APs for the given SSID so it can pick the best one and
-   therefore it goes through a certain number of request rounds and fixed wait periods
-   even if some AP has already responded.
-
-I'm sure there are additional nuances I'm not understanding, if you have more info I'd appreciate if
-you could leave a comment!
+The long probing for the access point can be optimized away. In addition, it's not smart to use
+open access points, so it's time to measure the cost of security!
+<!--more-->
 
 ### Optimizing the probing
 
-Now to mode 3, which specifies all possible Wifi parameters in `WiFi.begin()` and `WiFi.config()`
-and therefore runs much faster.
+Mode 3 in
+the [test sketch](https://github.com/tve/low-power-wifi/tree/master/esp32-deep-sleep)
+specifies all possible Wifi parameters in `WiFi.begin()` and `WiFi.config()`
+and therefore runs much faster:
 
 ![ESP32 deep sleep scope capture](/img/low-power-wifi/esp32-deep-sleep-open-mode-3-all-annot.png)
 _Scope capture of the esp32 waking from deep sleep and making a TCP connection to a server._
 
-The sketch changed a little bit for this scope capture and creates two "blips" on the yellow trace:
-one at the start of `setup()` until just before calling `Wifi.begin()` and a second starting when
+The sketch changed a little bit for this scope capture and creates two shorter "blips" on the
+yellow trace instead of a single long one:
+one blip at the start of `setup()` until just before calling `Wifi.begin()` and a second starting when
 `WiFi.status()` reports that it is connected (has an IP address) until just before calling
 deep-sleep.
 
@@ -130,12 +51,14 @@ probing... The overall packet trace is quite sweet and instructive:
 ```
 
 This was the probing! It took 121ms if we look at the time of the next packet in the dump below.
-This matches the scope trace. The actual packets are interesting: the first is the expected probe request
-kicking things off, then comes an ARP request from the server we're going to contact, which is
-really the server trying to get a MAC address to send some
-FIN packets from the previous sketch iteration. What's interesting is that _the esp32 answers_ with
-an ACK in packet 120. There is no ARP reply, though, which makes sense since it hasn't gotten
-confirmation of its IP address yet.
+This matches the scope trace. The actual packets are a little odd: the first is the expected probe request
+kicking things off, but then comes an ARP request from the server we're going to contact!
+This is really the server trying to get a MAC address to send some
+FIN packets from the previous sketch iteration. What's odd is that _the esp32 answers_ with
+an ACK in packet 120. There is no ARP reply, though, which makes sense since it hasn't really
+associated with the AP yet.
+So somehow more than expected of the Wifi stack must be hooked-up even though there is no
+association, I wonder whether there's an attack vector buried in here...
 
 Quickly thereafter comes a probe response and ACK. What I don't understand, again, is why this is
 followed by a ~110ms pause. It seems to me that the esp32 should not be waiting since it found the
@@ -193,15 +116,15 @@ because my linux server is lazy in responding all this looks about as good as on
 
 ### Secure access point
 
-The next question is what happens when switching to a secure access point and the following scope
-trace answers it:
+Does security run into the same power increase as it does with the esp8266?
+The following scope trace answers this question:
 
 ![ESP32 deep sleep scope capture](/img/low-power-wifi/esp32-deep-sleep-secure-mode-3-all-annot.png)
 _Scope capture of the esp32 waking from deep sleep and making a TCP connection to a server on
 a secure (WPA2) Wifi network._
 
-Ouch, we still have to pay a price when we choose security!
-(Note the 200ms/div vs. 50ms/div in the open-AP scope capture!)
+Yes, we still have to pay a price when we choose security!
+(Note the 200ms/div here vs. 50ms/div in the open-AP scope capture further up.)
 The primary difference with respect to the open
 access point trace is the approx 700ms period of elevated power consumption between the end of the
 probes and the association (I verified this with a packet dump).
@@ -214,7 +137,7 @@ let's see whether anyone can provide an insight.
 
 ### Power calculations
 
-The following table shows the expected run-times on a 1000mAh battery assuming wake-up intervals
+The following table and chart show the expected run-times on a 1000mAh battery assuming wake-up intervals
 from once per hour down to once every 20 seconds. The "open" columns refer to open access points and
 "secure" to WPA2-PSK. The "act%" columns refer to the percent of total power consumption that comes
 from the active period (startup+wake).
@@ -226,7 +149,9 @@ sleep [min] | open [mA] | open [days] | open [act%] | secure [mA] | secure [days
 1 | 0.64 | 65.6 | 98% | 2.04 | 20.5 | 100%
 0.33 | 1.90 | 21.9 | 99% | 6.15 | 6.8 | 100%
 
-The assumptions underlying the table are:
+![ESP32 Deep-Sleep with Periodic Wake-up](/img/low-power-wifi/ESP32 Deep-Sleep with Periodic Wake-up.png# fr w-60pct nocaption)
+
+The assumptions underlying the table and chart are:
 
 metric | value
 --- | ---
@@ -251,7 +176,16 @@ the esp32 provides a number of options when using the deep-sleep mode. Specifica
 every 20 seconds when using an open access point (not really recommended!) and every minute when
 using a secure access point.
 
-The [next post](/lp-wifi-esp32-mqtt) goes a step further and explores what happens if the esp32
+The [next post](/2018/lp-wifi-esp32-mqtt) goes a step further and explores what happens if the esp32
 makes a TLS connection to an MQTT server and sends & receives some messages.
 
-[Low-power Wifi series index](/categories/low-power-wifi)
+### Addendum
+
+The esp32 provides an additional explicit light-sleep mode that has not been
+explored here and that is closely related to deep-sleep.
+Explicit light-sleep puts the cpu and radio into light-sleep mode for a fixed duration just
+like deep-sleep does, but it preserves memory content. This allows the periodic wake-up to be
+implemented without loosing memory state but at the cost of higher power consumption. The Wifi has
+to be turned off prior to entering light-sleep, so the wake-cycle power is expected to be very similar
+to the deep-sleep case since most of the power is spent on connecting to Wifi (especially in the
+secure network case).

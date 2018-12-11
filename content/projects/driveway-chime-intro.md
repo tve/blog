@@ -3,6 +3,7 @@ name: driveway-chime
 title: Driveway entrance chime powered by solar light barrier
 date: 2018-10-06
 thumbnail: "/img/light-barrier/20181005_lightbarrier_sq.jpg"
+project: driveway-chime
 categories:
 - light barrier
 - stm32
@@ -45,4 +46,4 @@ I finally searched on how one does this (would have been too easy to do this ini
 it?). The answer I came up with is to pulse the IR LED at a specific frequency and use a detector
 that is tuned to that frequency. This way it can filter out ambient IR light.
 
-[Continued...](/categories/light-barrier)
+The [next post](/2018/light-barrier) describes the light-barrier.

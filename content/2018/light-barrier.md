@@ -2,6 +2,7 @@
 title: Solar-powered light barrier across the driveway
 date: 2018-11-11
 thumbnail: "/img/light-barrier/20181005_142037_sq.jpg"
+project: driveway-chime
 categories:
 - light barrier
 - stm32
@@ -172,3 +173,5 @@ The RF transmission of the interruptions is not working well, unfortunately. THe
 green stuff between the unit and my current RF-MQTT gateway. I tried using a better antenna and that
 improved things, but not enough. I am planning to add more gateways so this project will be a bit on
 hold until that happens.
+
+To be continued...

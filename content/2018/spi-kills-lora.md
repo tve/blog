@@ -2,8 +2,8 @@
 title: SPI kills LoRa radio
 date: 2018-07-21
 thumbnail: "/img/sports-tracker/20180924_145431.jpg"
+project: sports-tracker
 categories:
-- Sports tracker
 - LoRa
 ---
 I spent some time this week troubleshooting the LoRa communication
@@ -73,3 +73,5 @@ option is to use a uC chip with more pins so I can dedicate one SPI bus
 just to the radio, under the assumption that it's just the SPI bus that
 matters and that I can decouple power sufficiently. The other would be to
 break things up and use separate PCBs and uCs for radio vs. display, etc.
+
+Sometimes accidents happen, as described in the [next post](/2018/saltwater-electronics)

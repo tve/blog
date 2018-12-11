@@ -3,8 +3,8 @@ name: lp-wifi-esp32-boards
 title: Low-Power ESP32 Boards
 date: 2018-12-01
 thumbnail: "/img/low-power-wifi/esp32-boards-sq.jpg"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp32
@@ -23,7 +23,7 @@ there.
 
 ### NodeMCU Esp32S
 
-![Esp32 NodeMCU board](/img/low-power-wifi/esp32-boards-nodemcu.jpg# fr w-30pct)
+![Esp32s NodeMCU board](/img/low-power-wifi/esp32-boards-nodemcu.jpg# fr w-30pct)
 I ordered a NodeMCU Esp32s a while back because the price seemed right and it was one of these "I
 may want to have this some day" type of purchases. I developed the first apps having it attached to
 USB.
@@ -41,28 +41,30 @@ Anyway, probably a great board, but totally unsuitable for battery operation.
 
 ### Adafruit Huzzah32
 
-I wanted to get to my battery power measurements badly so I loked around on Amazon for prime
-shipping.
-I saw the Adafruit Huzzah32. $20, ouch! But with a LiPo connector and an integrated charger it's
+![Esp32 Huzzah32 board](/img/low-power-wifi/esp32-boards-huzzah32.jpg# fr w-50pct ml3)
+
+I wanted to get to my battery power measurements badly so I loked around on Amazon for options with
+prime shipping.
+I saw the Adafruit Huzzah32 at $20, ouch! But with a LiPo connector and an integrated charger it's
 clearly designed for battery operation. Ok, gotta pay for quality. Buy now!
 
-![Esp32 Huzzah32 board](/img/low-power-wifi/esp32-boards-huzzah32.jpg# fr w-40pct)
-
 The good news: it ran my first test apps fine. The bad news: it consumes power like there's no
-tomorrow. Deep sleep means 6.5mA. No, that's not a typo: milliamperes. Or put differently, a cool
+tomorrow. Deep-sleep means 6.5mA. No, that's not a typo: milliamperes. Or put differently, a cool
 1000x more than it should.
 
-At that point I wished I had ordered one of the cheap chinese boards. So I browsed around and found
+![CP2104 fix](/img/low-power-wifi/huzzah32-fix.jpg# fr w-50pct ml3)
+
+At that point I wished I had ordered one of the cheap chinese boards. But I browsed around and found
 the answer: the CP2104 USB-serial chip doesn't power down. More browsing later, I found that it can
 be seduced into USB suspend state, i.e., low-power state, by adding a pull down resistor on the USB
 D- line. That brought power consumption down into the 200uA-250uA range. Great improvement, but still far
-from the goal. At least that's not totally ridiculous anymore.
+from the goal. At least it's not totally ridiculous anymore.
 
 I had another "fun" experience with the Huzzah32. Long story short it produced weird errors that I
 couldn't reproduce with the NodeMCU. I eventually reached the hypothesis that the flash chip was not
 working properly, so I decided to remove the esp32-wroom shield and replace the flash chip. Except
 that I completely botched it and lifted two pads. Ouch. The result is a "creative" flash chip
-placement visible in the photo. It does work flawlessly now, though.
+placement visible in the first photo. It does work flawlessly now, though.
 
 ### Sparkfun Esp32 Thing
 
@@ -72,30 +74,31 @@ have a CP2104/CP2102 USB interface then the pickings become real slim.
 
 ![Sparkfun Esp32 Thing board](/img/low-power-wifi/esp32-boards-thing.jpg# fr w-30pct)
 
-The Sparkfun Esp32 Thing caught my eye. It has a different LDO and an FTDI USB chip. It also has a LiPo
+The Sparkfun Esp32 Thing caught my eye. It has a different LDO and a FTDI USB chip. It also has a LiPo
 charger and connector and seemed well designed. Again, $21. But that's better than $8 for a board
 that doesn't even _run_ on LiPO. Buy now!
 
-I plugged the Thing in and measured deep sleep current: 2mA! Ok, that's unfair, it has a power-on
+I plugged the Thing in and measured deep-sleep current: 2mA! Ok, that's unfair, it has a power-is-on
 LED and a jumper-trace in the back that needs to be cut. After cutting the trace I measured 900uA.
-At that point I got rather annoyed. This was the second expensive board that completely flunks the deep
-sleep test.
+At that point I got rather annoyed. This was the second expensive board that completely flunks the
+deep-sleep test.
 
 I browsed the Sparkfun docs: nothing about the power consumption, except for other users complaining
 about the same thing. Some more browsing later I found out that another jumper-trace in the back
-needs to be cut and switched around so the flash chip gets powered by the esp32 instead of the 3.3v
-rail. This way it gets powered down in deep sleep. Now the power consumption got down to 63uA. Looking at
-the LDO data sheet shows that its typical quiescent consumption is 55uA, so it's unlikely one can
+needs to be cut and switched around so the flash chip gets powered by a special LDO inside
+the esp32 instead of the 3.3v rail.
+This way it gets powered down in deep-sleep. Now the power consumption got down to 63uA. Looking at
+the LDO data sheet reveals that its typical quiescent consumption is 55uA, so it's unlikely one can
 get much lower.
 
-The good news: it's better than the Huzzah32. The bad news: it's 10x more than the esp32's deep
-sleep consumption. In all fairness, the deep sleep power consumption is good enough for the vast
+The good news: it's better than the Huzzah32. The bad news: it's 10x more than the esp32's
+deep-sleep consumption. In all fairness, the 55uA power consumption is good enough for the vast
 majority of use-cases. Unless the esp32 is to sleep for hours between wake-ups the difference
-between 63uA and 6.3uA does not matter.
+between 63uA and 6.3uA does not matter much.
 
 All-in-all this is the best board I've seen, except for the fact that it doesn't have an FCC certified
 esp32 module. Not only does it have the best deep-sleep performance, it also has a well-engineered
-usb/lipo power switchover and charge circuitry and it has a 32khz oscillator for accurate RTC timing.
+usb/lipo power switchover/charge circuitry and it has a 32khz oscillator for accurate RTC timing.
 
 ### Building my own board
 
@@ -115,4 +118,6 @@ it should be enough.
 
 Stay tuned for more posts about the Esp32's Wifi power consumption...
 
-[Low-power Wifi series index](/categories/low-power-wifi)
+The [next post](/2018/lp-wifi-esp32-light) switches from deep-sleep to experiments using automatic
+light-sleep allowing the esp32 to maintain an association with the AP while going into low-power
+modes.

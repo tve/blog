@@ -3,8 +3,8 @@ name: lp-wifi-esp8266-2
 title: ESP8266 with Optimized Periodic Wakeup
 date: 2018-11-23
 thumbnail: "/img/low-power-wifi/ap-test-sq.png"
+project: low-power-wifi
 categories:
-- low-power-wifi
 - low-power
 - wifi
 - esp8266
@@ -14,14 +14,14 @@ This post dives into optimizing deep-sleep with periodic wakeup on the esp8266 a
 with some calculations about expected run-time on battery.
 <!--more-->
 
-If you haven't read the [previous post](/lp-wifi-esp8266-1) on the unoptimized version you probably
-should go back so you understand my set-up.
+(If you haven't read the [previous post](/2018/lp-wifi-esp8266-1) on the unoptimized version you probably
+should go back so you understand my set-up.)
 
 The following scope capture shows the wake cycle after optimization.
 The Wifi probes scanning all channels and the DHCP queries have disappeared.
 Note the horizontal scale of 50ms per division. That means that everything happens in about
 175 milliseconds! I also changed from `ESP.deepSleep()` to `ESP.deepSleepImmediate()` to avoid the
-lingering at the end of the activity before cutting the power.
+90ms of lingering at the end of the activity before cutting the power.
 
 ![Wake-up cycle](/img/low-power-wifi/ap-test-mode-3-all-annot.png# w-100pct)
 _Scope capture of a full wake cycle passing all possible parameters to `WiFi.begin` and `WiFi.connect`._
@@ -39,39 +39,14 @@ by the AP:
 0.851s <- Beacon (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 12.0 18.0 Mbit] ESS CH: 6
 ```
 
-After a 114ms idle period (the beacons in the above packet dump don't matter) comes
-the association with the AP which starts with a de-association in order to clear any old
-state in the AP:
+After a 114ms idle period comes the association exchange
+which is not shown here because it is identical to the one in the unoptimized sketch
+shown in the previous post.
 
-```
-0.907s -> DeAuthentication (5c:cf:7f:05:c0:db): Deauthenticated because sending station is leaving (or has left) IBSS or ESS
-0.907s <- Acknowledgment RA:5c:cf:7f:05:c0:db
-0.907s -> Authentication (Open System)-1: Successful
-0.907s <- Acknowledgment RA:5c:cf:7f:05:c0:db
-0.912s <- Authentication (Open System)-2:
-0.912s -> Acknowledgment RA:74:da:38:06:52:32
-0.913s -> Assoc Request (test) [5.5* 11.0* 1.0* 2.0* 6.0 12.0 24.0 48.0 Mbit]
-0.913s <- Acknowledgment RA:5c:cf:7f:05:c0:db
-0.916s <- Assoc Response AID(1) :: Successful
-0.917s -> Acknowledgment RA:74:da:38:06:52:32
-```
-
-Now that the esp8266 has an association it confirms that no-one else has its IP address using a
-gratuitous ARP which is immediately followed by an ARP request to get the MAC address of the server
-for the TCP connection. Note that this second ARP request is repeated after 5ms because evidently
-the server didn't answer.
-
-```
-0.919s -> ARP, Request who-has 192.168.0.106 tell 192.168.0.106, length 28
-0.920s <- Acknowledgment RA:5c:cf:7f:05:c0:db
-0.922s <- Beacon (test) [1.0* 2.0* 5.5* 11.0* 6.0 9.0 12.0 18.0 Mbit] ESS CH: 6
-0.925s -> ARP, Request who-has 192.168.0.106 tell 192.168.0.106, length 28
-0.930s -> ARP, Request who-has 192.168.0.2 tell 192.168.0.106, length 28
-0.930s <- Acknowledgment RA:5c:cf:7f:05:c0:db
-0.935s -> ARP, Request who-has 192.168.0.2 tell 192.168.0.106, length 28
-0.936s <- ARP, Reply 192.168.0.2 is-at b8:97:5a:90:54:5a, length 46
-0.937s -> Acknowledgment RA:74:da:38:06:52:32
-```
+Because the sketch specifies the IP address for the esp8266 there is no DHCP exchange and the
+esp8266 proceeds with some gratuitous ARPs to confirm that no-one else has its IP address.
+It then requests the MAC address of the server for the TCP connection.
+This entire ARP sequence is identical to the unoptimzed case.
 
 With MAC address in hand the esp8266 opens the TCP connection and should transfer the data but what
 the capture shows is this:
@@ -101,22 +76,22 @@ the capture shows is this:
 [a few dozen more of the same...]
 ```
 
-It starts out with a TCP SYN ("Flags [S]") as expected and the back-to-back Acknowledgment packets
+It starts out with a TCP SYN (`Flags [S]`) as expected and the back-to-back Acknowledgment packets
 indicate that the monitoring adapter missed some packets but the odd part is the second TCP packet,
-which is a connection reset ("Flags [R]"). That's not expected. And the third appears to be a new
+which is a connection reset (`Flags [R]`). That's not expected. And the third packet appears to be a new
 SYN for a fresh connection.
 
-Another oddity is that at the end the server (192.168.0.2) sends a pile of FIN packets ("Flags
-[F]"), which indicates that the esp8266 has gone to sleep before the connection closed properly
+Another oddity is that at the end the server (192.168.0.2) sends a pile of FIN packets (`Flags
+[F]`), which indicates that the esp8266 has gone to sleep before the connection closed properly
 and the server is trying to get an ACK for its FIN.
-So basically the server is left hanging trying to close the connection.
+So basically the server is left hanging trying to finish closing the connection.
 
 I then looked at a longer capture that shows multiple wake cycles and noticed that the esp8266
 uses the same source port (55779) each time! Now we can explain the connection reset: the server
 can't close the connection at the end of a wake-up cycle and the esp8266 then comes along at the next
 cycle with the same &lt;src IP, src port, dst IP, dst port&gt; combination. To the server this
-looks like a continuation of the TCP connection, which results in a protocol violation which the
-esp8266 eventually resolves using a TCP reset.
+appears like a continuation of the not quite closed TCP connection, which results in a protocol
+violation which the esp8266 eventually resolves using a TCP reset.
 
 Fortunately we can fix this little problem by setting the local port number before opening the
 connection using `WiFi.setLocalPortStart()` and then incrementing and remembering it in the RTC RAM.
@@ -152,14 +127,14 @@ the previous packet dump exactly, I didn't capture the same iteration this time.
 _Magnification of the activity portion of the wake cycle after fixing the local port numbers._
 
 The vertical cursors show that the entire activity period lasts only 31 milliseconds
-and the vertical cursors show that the power draw is just around 70mA most of the time.
+and the horizontal cursors show that the power draw is just around 70mA most of the time.
 The total wake cycle still lasts 170-180ms primarily due to the wait-time after the probe requests.
 
 ### Secure access points
 
 All the experiments so far have used an open unencrypted access point. This made the packet dump
 analysis easy because all is in the clear. But it's also insecure: everything is in the clear and
-can be hijacked at will. The question this raises is what happens when using a secure access point?
+can be hijacked at will. What happens when using a secure access point?
 The following scope capture shows the same sketch when using the same AP with a WPA2 encrypted SSID:
 
 ![Wake-up cycle with secure AP](/img/low-power-wifi/ap-secret-mode-3-all-annot.png# w-100pct)
@@ -192,8 +167,8 @@ one second pause between the probe response and the authentication.
 Looking carefully at the scope trace one can see that the power
 consumption is slightly higher during that time compared to most of the other wake time
 (except for TX spikes).
-I have the strong suspicion that this is the time it takes to perform the crypto necessary for the
-subsequent association request, but I can't prove that.
+I wonder whether the esp8266 prepares some crypto calculations for
+subsequent association request, but I don't really know.
 
 The next set of packets are all encrypted which makes it difficult to make out what they are,
 but looking at a tcpdump on the server end is helpful:
@@ -245,11 +220,11 @@ Notes:
 - The columns labeled _[act%]_ show the percentage of power spent during the wake cycle.
 - The first row corresponds to a system that wakes up every hour, the last one every 20 seconds.
 
+![Esp8266 run-time using deep-sleep with periodic wake-up](/img/low-power-wifi/ESP8266 Deep-Sleep with Periodic Wake-up Run-Time.png# nocaption)
+
 The conclusion one can draw here is that it is should certainly be possible to run an esp8266 in
 this periodic wake-mode for a week to over a year on a single 1000mAh LiPo battery!
 
-The [next post](/lp-wifi-association) takes a brief look at an alternative, which is to
+The [next post](/2018/lp-wifi-association) investigates an alternative, which is to
 maintain an association with the access point and leverage power save mode to reduce
 power consumption.
-
-[Low-power Wifi series index](/categories/low-power-wifi)

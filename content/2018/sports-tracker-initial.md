@@ -1,9 +1,9 @@
 ---
 title: Ocean Sports Fitness Tracker initial status
-date: 2018-07-14
+date: 2018-07-15
 thumbnail: "/img/sports-tracker/20180717_175701_sml.jpg"
+project: sports-tracker
 categories:
-- Sports tracker
 ---
 
 I've now taken the prototype on several outings and it's starting to
@@ -60,3 +60,5 @@ The other task is to automatically determine the start and end of an
 outing using some form of geofencing, and then storing the track of each
 outing in a proper database so it can be processed in various manners and
 also sent to endomondo or a similar sports tracking site automatically.
+
+The [next post](/2018/spi-kills-lora) describes some radio problems with the prototype.
