@@ -18,6 +18,9 @@ sun exposure.
 It focuses on use-cases where the microcontroller remains connected to Wifi or at least maintains
 that illusion by being reachable with a few seconds of response time.
 
+_Tl;dr: this series is pretty long and in-depth, if you prefer to cut to the chase you
+can zip right to the [conclusions](/2018/lp-wifi-esp-comparison#conclusions)._
+
 I looked into using the esp8266 on battery in 2015 when I first started using it and quickly gave
 up.
 At the time it became apparent that while the hardware could sleep at low power, the software was
