@@ -1,7 +1,7 @@
 ---
 name: lp-wifi-esp32-pushed
 title: ESP32 Pushing the Envelope
-date: 2018-12-05
+date: 2018-12-09
 thumbnail: "/img/low-power-wifi/max.png"
 project: low-power-wifi
 tags:
