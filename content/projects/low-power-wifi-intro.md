@@ -1,6 +1,6 @@
 ---
 name: low-power-wifi-intro
-title: Explorations into low-power wifi microcontrollers
+title: Explorations into Low-Power Wifi Microcontrollers
 date: 2018-11-18
 thumbnail: "/img/low-power-wifi/20181119_231556_sq.jpg"
 project: low-power-wifi
@@ -13,8 +13,10 @@ links. This project and blog post series explores what is available at the end o
 <!--more-->
 
 In this exploration, low-power refers to a wifi-connected microcontroller that runs at least for a week on a 1000mAh
-LiPo and could thus run indefinitely on a small 2"x3"/5x8cm 6V 100mA solar panel with good
+LiPo and could thus run indefinitely on a small 100mA/6V solar panel with good
 sun exposure.
+It focuses on use-cases where the microcontroller remains connected to Wifi or at least maintains
+that illusion by being reachable with a few seconds of response time.
 
 I looked into using the esp8266 on battery in 2015 when I first started using it and quickly gave
 up.
