@@ -53,10 +53,10 @@ which is dominated by the probing for the access point.
 The next two charts compare the run-times when using a secure AP and adding MQTTS/TLS in the esp32
 case.
 
-![Deep-sleep - secure AP](/img/low-power-wifi/Deep-sleep periodic wake-up - Secure AP 1.png# fr w-50pct nocaption)
-![Deep-sleep - secure AP](/img/low-power-wifi/Deep-sleep periodic wake-up - Secure AP 2.png# w-50pct nocaption)
+![Deep-sleep - secure AP](/img/low-power-wifi/Deep-sleep periodic wake-up - Secure AP 2.png# fr w-50pct nocaption)
+![Deep-sleep - secure AP](/img/low-power-wifi/Deep-sleep periodic wake-up - Secure AP 1.png# w-50pct nocaption)
 
-When using a secure access point the esp8266 and esp32 show roughty the same performance.
+When using a secure access point the esp8266 and esp32 show roughly the same performance.
 The reason is that while the esp32 uses more power when active it completes the WPA2-PSK
 association more rapidly then the esp8266.
 
@@ -65,9 +65,12 @@ the esp32 performs the crypto and the rapid Wifi packet exchanges.
 
 ### Light-sleep maintaining an association
 
-The next charts use automatic light-sleep where the processors automatically go to sleep when there is no
-activity and wake-up periodically to maintain an association with the access point.
-The chart varies the iteration period and the number of background broadcast packets per second.
+The next chart shows automatic light-sleep where the microcontroller automatically goes to sleep
+when there is no activity and wakes-up periodically to maintain an association with the access point.
+The chart varies the iteration period and assumes one broadcast packet causing a wake-up every 10
+seconds.
+
+![Light-sleep - secure AP](/img/low-power-wifi/Light-sleep - Secure AP.png# fr w-50pct ml3 nocaption)
 
 In the esp32 case the chart uses the values for the ["pushed"
 version](/2018/lp-wifi-esp32-pushed#to-the-limit),
@@ -79,30 +82,65 @@ while the esp32 publishes a message over MQTT/TLS and receives a subscription me
 However, as we've seen before, the exact nature of the connection tends not to be the dominant
 factor in the overall power consumption.
 
-![Light-sleep - secure AP](/img/low-power-wifi/Light-sleep - Secure AP.png# w-100pct nocaption)
-
 In light-sleep mode the esp32 performs much better than the esp8266 in large part due to the
 esp8266's bug where it drops into modem-sleep instead of light-sleep about half the time after a
 beacon.
 
 The fact that the esp32 allows the listen interval to be set explicitly is also an advantage, not
-just in terms of the numbers shown here but also because it reduces the impact of OOPS
-
-
-
-
-
-
-
-
-
-
+just in terms of the numbers shown here but also because it reduces the impact of Wifi broadcast
+activity.
 
 ### Conclusions
 
+To conclude the esp8266 and esp32 low-power wifi exploration the graph below summarizes the
+tradeoffs between the two microcontrollers and the two sleep modes. It's a bit of an eye chart with
+so many lines but the lines comes in pairs making it not all that difficult to walk though (see
+below). The chart
+shows the run-time on an idealized 1000mAh battery on the vertical axis (i.e. higher is better) vs.
+the interval at which the code is waking up to communicate.
+All the numbers are based on modeling the observed behavior of the microcontrollers.
 
+![Esp8266 vs. esp32, light-sleep and deep-sleep](/img/low-power-wifi/ESP8266 vs. ESP32 in Light-Sleep and Deep-Sleep.png# w-100pct nocaption)
 
+The lines that go off the top of the chart are for deep-sleep with periodic wake-up using an
+insecure open access point.
+Deep-sleep without crypto uses the least power of all options when
+iteration times exceed a few seconds.
+The esp8266 fares better than the esp32 because it uses less power when active and has a shorter
+start-up sequence. Both cases specify all parameters to `WiFi.begin` and `WiFi.config`, i.e. they're
+the optimized cases.
 
+The other two straight lines that are right on top of one another are for deep-sleep with periodic
+wake-up but using a secure WPA2-PSK access point.
+Somewhat surprisingly the two microcontrollers perform basically the same, although the comparison
+is slightly skewed because the esp32 communicates with an MQTT/TLS server at each wake-up while the
+esp8266 only sends a brief TCP message.
+The esp32 performs the WPA2 crypto faster than the esp8266 but uses more power while doing so.
+
+The two solid curved lines are for automatic light-sleep where `loop()` iterates periodically and
+there is approximately one broadcast packet every 10 seconds on the network that also wakes-up the
+microcontroller. In both cases a secure access point is used.
+The lines are curved because at short intervals the `loop()` wake-up is the dominant effect while at
+long intervals the broadcast packet wake-up becomes dominant.
+Here the esp32 performs much better than the esp8266 primarily because it reliably goes back to light-sleep.
+In addition, its power save listen interval is 5x as long and
+it goes to sleep more rapidly after waking up.
+
+The final two dotted lines are idealized: they cannot be achieved with the current Espressif WiFi
+firmware.
+In the esp32 case the dotted line represents automatic light-sleep where the lingering interval
+before re-entering power-save mode has been shortened from 50ms to 10ms. In the esp8266 case it
+represents fixing a bug that puts the microcontroller into modem-sleep instead of light-sleep about
+half the time. These two lines show what might be achievable if Espressif fixed these issues.
+
+Comparing the esp32 light-sleep and deep-sleep cases shows a cross-over around an interval of 60
+seconds. This means that use-cases that only require a wake-up every minute or longer should
+use deep-sleep as expected, but use-cases where the microcontroller needs to remain reachable at all
+times work better in the light-sleep mode.
+
+My personal opinion on this comparison is biased towards security, and that strongly favors the
+esp32 not only because of the power consumption but also because of its larger memory, which makes
+the use of TLS much more practical.
 
 
 This series will be continued, stay tuned...
