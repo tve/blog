@@ -4,7 +4,7 @@ title: Low-Power Wifi with the ESP32
 date: 2018-11-26
 thumbnail: "/img/low-power-wifi/esp32-set-up_sq.jpg"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

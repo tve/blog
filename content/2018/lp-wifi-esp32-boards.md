@@ -4,7 +4,7 @@ title: Low-Power ESP32 Boards
 date: 2018-12-01
 thumbnail: "/img/low-power-wifi/esp32-boards-sq.jpg"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

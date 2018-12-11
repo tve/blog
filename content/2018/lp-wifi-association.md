@@ -4,7 +4,7 @@ title: Low-Power Wifi using Power Save Mode
 date: 2018-11-24
 thumbnail: "/img/low-power-wifi/legacy_power.JPG"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 ---

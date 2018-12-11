@@ -4,7 +4,7 @@ title: Driveway entrance chime powered by solar light barrier
 date: 2018-10-06
 thumbnail: "/img/light-barrier/20181005_lightbarrier_sq.jpg"
 project: driveway-chime
-categories:
+tags:
 - light barrier
 - stm32
 - solar

@@ -4,7 +4,7 @@ title: ESP8266 with Optimized Periodic Wakeup
 date: 2018-11-23
 thumbnail: "/img/low-power-wifi/ap-test-sq.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp8266

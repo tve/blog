@@ -4,7 +4,7 @@ title: ESP32 Dynamic Frequency Scaling
 date: 2018-12-04
 thumbnail: "/img/low-power-wifi/esp32-light-sleep-sq.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

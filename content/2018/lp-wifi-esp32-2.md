@@ -4,7 +4,7 @@ title: ESP32 Deep-Sleep with Periodic Wake-up
 date: 2018-11-27
 thumbnail: "/img/low-power-wifi/esp32-deep-sleep-secure-mode-3-all-sq.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

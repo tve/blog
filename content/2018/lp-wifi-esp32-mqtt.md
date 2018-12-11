@@ -4,7 +4,7 @@ title: ESP32 Deep-Sleep Connecting to MQTT
 date: 2018-11-30
 thumbnail: "/img/low-power-wifi/mqtt-logo.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

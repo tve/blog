@@ -4,7 +4,7 @@ title: ESP8266 vs. ESP32 on Battery Power
 date: 2018-12-06
 thumbnail: "/img/low-power-wifi/esp8266-esp32.jpg"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

@@ -4,7 +4,7 @@ title: ESP8266 Maintaining an Association
 date: 2018-11-25
 thumbnail: "/img/low-power-wifi/esp8266-light-sleep-open-sq.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp8266

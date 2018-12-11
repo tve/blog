@@ -3,7 +3,7 @@ title: Ocean Sports Fitness Tracker initial status
 date: 2018-07-15
 thumbnail: "/img/sports-tracker/20180717_175701_sml.jpg"
 project: sports-tracker
-categories:
+tags:
 ---
 
 I've now taken the prototype on several outings and it's starting to

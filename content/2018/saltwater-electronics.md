@@ -3,7 +3,7 @@ title: Do electronics like saltwater?
 date: 2018-07-26
 thumbnail: "/img/sports-tracker/20180807_205955_sml.jpg"
 project: sports-tracker
-categories:
+tags:
 ---
 Picture yourself swimming in the ocean and looking at your electronics
 bathing in the saltwater next to you...<!--more-->

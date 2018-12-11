@@ -3,7 +3,7 @@ title: Solar-powered light barrier across the driveway
 date: 2018-11-11
 thumbnail: "/img/light-barrier/20181005_142037_sq.jpg"
 project: driveway-chime
-categories:
+tags:
 - light barrier
 - stm32
 - rfm69

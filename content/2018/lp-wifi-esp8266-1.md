@@ -4,7 +4,7 @@ title: ESP8266 Deep-Sleep with Periodic Wakeup
 date: 2018-11-22
 thumbnail: "/img/low-power-wifi/esp8266-set-up_sq.jpg"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp8266

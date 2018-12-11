@@ -3,7 +3,7 @@ title: SPI kills LoRa radio
 date: 2018-07-21
 thumbnail: "/img/sports-tracker/20180924_145431.jpg"
 project: sports-tracker
-categories:
+tags:
 - LoRa
 ---
 I spent some time this week troubleshooting the LoRa communication

@@ -4,7 +4,7 @@ title: ESP32 Pushing the Envelope
 date: 2018-12-05
 thumbnail: "/img/low-power-wifi/max.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32

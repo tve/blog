@@ -4,7 +4,7 @@ title: Ocean Sports Fitness Tracker
 date: 2018-07-14
 thumbnail: "/img/sports-tracker/20180717_175701_crop.jpg"
 project: sports-tracker
-categories:
+tags:
 - stm32
 - gps
 - lora

@@ -4,7 +4,7 @@ title: Explorations into low-power wifi microcontrollers
 date: 2018-11-18
 thumbnail: "/img/low-power-wifi/20181119_231556_sq.jpg"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 ---

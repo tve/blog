@@ -3,7 +3,7 @@ languageCode = "en-us"
 title = "TvE's Blog"
 theme = "story"
 enableRobotsTXT = true
-paginate = 10
+paginate = 20
 summaryLength = 40
 
 [params]
@@ -25,6 +25,11 @@ summaryLength = 40
   name = "Projects"
   title = "Projects"
   url = "/projects/"
+
+[[menu.main]]
+  name = "Tags"
+  title = "Tags"
+  url = "/tags/"
 
 [outputs]
   home = ["HTML", "JSON", "RSS"]

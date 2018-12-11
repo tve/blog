@@ -2,9 +2,9 @@
 name: lp-wifi-esp32-light
 title: ESP32 Maintaining an Association
 date: 2018-12-03
-thumbnail: "/img/low-power-wifi/esp32-light-sleep-sq.png"
+thumbnail: "/img/low-power-wifi/esp32-modem-sleep-mqtt-sq.png"
 project: low-power-wifi
-categories:
+tags:
 - low-power
 - wifi
 - esp32
