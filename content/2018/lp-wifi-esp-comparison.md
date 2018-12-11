@@ -1,7 +1,7 @@
 ---
 name: lp-wifi-esp-comparison
 title: ESP8266 vs. ESP32 on Battery Power
-date: 2018-12-06
+date: 2018-12-10
 thumbnail: "/img/low-power-wifi/esp8266-esp32.jpg"
 project: low-power-wifi
 tags:
@@ -14,6 +14,7 @@ tags:
 Having examined the esp8266 and esp32 power consumption in detail it is time to
 compare the two.
 <!--more-->
+
 
 In all the comparisons in this post the following definitions/assumptions are made:
 
