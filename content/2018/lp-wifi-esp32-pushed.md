@@ -40,6 +40,9 @@ The specific settings I experimented with are:
 - wake-up interval to pub/sub MQTT messages = 23 seconds (I picked an odd interval)
 - MQTT keep-alive = 70 seconds (effectively no keep-alives are sent)
 
+The final code is [available on
+github](https://github.com/tve/low-power-wifi/tree/master/esp32-pow-save-mqtt).
+
 Another setting that could be tweaked is to disable the periodic sending of gratuitous ARPs by LwIP,
 but because it only happens once a minute I'm not convinced it makes a real difference here. 
 The setting I really wanted to change as well is the Wifi RX lingering period before re-entering power-save
