@@ -39,6 +39,13 @@ The board uses an AMS1117 and its drop-out voltage, i.e., minimal input-to-outpu
 Calling this an LDO seems like a marketing stunt to me...
 Anyway, probably a great board, but totally unsuitable for battery operation.
 
+_Update:_ I somehow ended up with some more boards with an AMS1117 LDO and finally spent some time looking
+whether I could replace it with a better one. Finding an LDO with the same package is easy but they
+don't tend to have the same pin-out. I finally found the AP7361C-33ER, which has a low drop-out
+and the same pin-out _and_ Digikey has it in stock! I used some hot air to desolder an AMS1117 and
+put the AP7361C in its place and it works like a charm on a LiPo! Be careful when ordering, the "R"
+at the end of the part number is key, it refers to the "reverse" pin-out that the AMS1117 uses.
+
 ### Adafruit Huzzah32
 
 ![Esp32 Huzzah32 board](/img/low-power-wifi/esp32-boards-huzzah32.jpg# fr w-50pct ml3)

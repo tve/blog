@@ -143,5 +143,6 @@ My personal opinion on this comparison is biased towards security, and that stro
 esp32 not only because of the power consumption but also because of its larger memory, which makes
 the use of TLS much more practical.
 
-
-This series will be continued, stay tuned...
+While there are some more loose end I'd like to explore with the esp8266 and esp32 the
+[next post](/2018/lp-wifi-rtl8710-lps) switches gears a little and investigates the RealTek RTL8710
+in the form of the RTLDuino.
