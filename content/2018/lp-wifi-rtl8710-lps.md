@@ -130,5 +130,5 @@ So far it does not look like the RTL8710 provides a better alternative to the Es
 microcontrollers for low-power operation. The LPS mode may be usable given some tweaking but
 I very much doubt that it can be made to use less power than the esp32.
 
-Stay tuned for the next post which examines how the RTL8710 performs in deep-sleep with periodic
+The [next post](/2018/lp-wifi-rtl8710-deep) examines how the RTL8710 performs in deep-sleep with periodic
 wake-up.

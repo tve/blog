@@ -1,6 +1,6 @@
 ---
 name: lp-wifi-esp8266-2
-title: ESP8266 with Optimized Periodic Wakeup
+title: ESP8266 with Optimized Periodic Wake-up
 date: 2018-11-23
 thumbnail: "/img/low-power-wifi/ap-test-sq.png"
 project: low-power-wifi
