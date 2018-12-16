@@ -1,6 +1,6 @@
 ---
 name: low-power-wifi-intro
-title: Explorations into Low-Power Wifi Microcontrollers
+title: Running Wifi Microcontrollers on Battery
 date: 2018-11-18
 thumbnail: "/img/low-power-wifi/20181119_231556_sq.jpg"
 project: low-power-wifi

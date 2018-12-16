@@ -1,7 +1,7 @@
 ---
 title: RTL8710 Deep-Sleep with Periodic Wake-up
 date: 2018-12-15
-thumbnail: "/img/low-power-wifi/rtlduino-sq.jpg"
+thumbnail: "/img/low-power-wifi/rtl8710-deep-sleep-open.png"
 project: low-power-wifi
 tags:
 - low-power
@@ -85,4 +85,4 @@ actually lie somewhere between the esp8266 and the esp32, which would be pretty 
 deep-sleep with periodic wake-up performance is worse than for the esp32 and esp8266 due to the long
 time it takes to connect with the access point.
 
-Stay tuned for the next post which will take a brief look at some other low-power Wifi microcontrollers.
+The [next post](/2018/lp-wifi-other) which will take a brief look at some other low-power Wifi microcontrollers.

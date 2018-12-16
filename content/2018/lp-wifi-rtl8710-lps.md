@@ -1,7 +1,7 @@
 ---
 title: RTL8710 First Impressions
 date: 2018-12-13
-thumbnail: "/img/low-power-wifi/rtlduino-sq.jpg"
+thumbnail: "/img/low-power-wifi/rtlduino.jpg"
 project: low-power-wifi
 tags:
 - low-power
