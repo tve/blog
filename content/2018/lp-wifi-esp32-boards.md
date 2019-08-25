@@ -10,6 +10,8 @@ tags:
 - esp32
 ---
 
+_Updated 2019-08-25 to include EzSBC's ESP32-01 Breakout and Development Board_
+
 In order to test the low-power performance of the esp32 I had to acquire a few boards and
 I didn't really like any of them.
 <!--more-->
@@ -122,6 +124,20 @@ Stepping down to 300mA the Richtek RT9078 LDO has an Iq of 2uA and
 the 300mA On semi NCP703 3 has an Iq of 12uA.
 Using a 300mA LDO may be a bit tight depending on what else it's powering, but for the esp32 itself
 it should be enough.
+
+![EzSBC board](/img/low-power-wifi/esp32-boards-ezsbc.jpg# fr w-30pct)
+
+### EzSBC ESP32-01 Breakout and Development Board
+
+_This section was added 2019-08-25_ 
+
+I became aware of this board through the designer's (Daniel deBeer) comments below and
+decided to order two for evaluation. The boards are nicely done and the inclusion of 2 RGB LEDs is
+welcome. The price is good and I had no difficulties running some of my test programs.
+
+Long story short the boards use a TS9013 LDO and, true to Daniel's claims, I see a 13uA-15uA average
+power consumption in deep sleep. I'd say: mission accomplished! I only hope he will have more in
+stock soon so I can order a couple more...
 
 Stay tuned for more posts about the Esp32's Wifi power consumption...
 
